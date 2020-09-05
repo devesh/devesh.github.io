@@ -1,0 +1,27 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>PE Zoom</title>
+  <meta name="description" content="PE Zoom Call">
+
+  <link rel="shortcut icon" href="https://us02st1.zoom.us/zoom.ico" />
+</head>
+
+<body>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+	if (window.matchMedia('(display-mode: standalone)').matches) {
+	    let iframe = document.createElement('iframe');
+	    iframe.src = 'https://mvwsd.zoom.us/j/84745056172?pwd=VVowLzI5eEphTVYxY2ZYRTUvdmpiZz09';
+	    iframe.onload = function() { window.close(); };
+	    document.body.appendChild(iframe);
+	} else {
+	    document.body.innerHTML = '<ol><li>Click "⋮" in the upper-right (below the "&times;")<li>Click "More tools"<li>Click "Create shortcut…"<li>Check "Open as window"<li>Click "Create"</ol>';
+	}
+    });
+  </script>
+</body>
+</html>
