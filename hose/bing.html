@@ -1,0 +1,73 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Bing Searches</title>
+  <meta name="description" content="Search Bing">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark light">
+  <style>
+    iframe {
+        width: 0;
+        height: 0;
+        border: none;
+        position: abolute;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 id="searches">0 Searches</h1>
+  <iframe src="https://www.bing.com/search?q=air+quality+mountain+view"></iframe>
+  <iframe src="https://www.bing.com/search?q=weather+mountain+view"></iframe>
+  <iframe src="https://www.bing.com/search?q=bing+rewards"></iframe>
+  <iframe src="https://www.bing.com/search?q=slickdeals"></iframe>
+  <iframe src="https://www.bing.com/search?q=wikipedia"></iframe>
+  <iframe src="https://www.bing.com/search?q=youtube"></iframe>
+  <iframe src="https://www.bing.com/search?q=amazon"></iframe>
+  <iframe src="https://www.bing.com/search?q=netflix"></iframe>
+  <iframe src="https://www.bing.com/search?q=news"></iframe>
+  <iframe src="https://www.bing.com/search?q=gmail"></iframe>
+  <iframe src="https://www.bing.com/search?q=github"></iframe>
+  <iframe src="https://www.bing.com/search?q=calfire"></iframe>
+  <iframe src="https://www.bing.com/search?q=hacker+news"></iframe>
+  <iframe src="https://www.bing.com/search?q=reddit"></iframe>
+  <iframe src="https://www.bing.com/search?q=twitter+search"></iframe>
+  <iframe src="https://www.bing.com/search?q=freegal"></iframe>
+  <iframe src="https://www.bing.com/search?q=kanopy"></iframe>
+  <iframe src="https://www.bing.com/search?q=hoopla"></iframe>
+  <iframe src="https://www.bing.com/search?q=mountain+view+library"></iframe>
+  <iframe src="https://www.bing.com/search?q=microsoft+rewards"></iframe>
+  <iframe src="https://www.bing.com/search?q=google+translate"></iframe>
+  <iframe src="https://www.bing.com/search?q=speed+test"></iframe>
+  <iframe src="https://www.bing.com/search?q=what+is+my+ip"></iframe>
+  <iframe src="https://www.bing.com/search?q=wayback+machine"></iframe>
+  <iframe src="https://www.bing.com/search?q=lemire+blog"></iframe>
+  <iframe src="https://www.bing.com/search?q=funcheapsf"></iframe>
+  <iframe src="https://www.bing.com/search?q=java+annotated+monthly"></iframe>
+  <iframe src="https://www.bing.com/search?q=ev+lease+deals"></iframe>
+  <iframe src="https://www.bing.com/search?q=colab"></iframe>
+  <iframe src="https://www.bing.com/search?q=oracle+cloud+login"></iframe>
+  <iframe src="https://www.bing.com/search?q=slack"></iframe>
+  <iframe src="https://www.bing.com/search?q=google+voice"></iframe>
+  <iframe src="https://www.bing.com/search?q=google+calendar"></iframe>
+  <iframe src="https://www.bing.com/search?q=coursera"></iframe>
+  <iframe src="https://www.bing.com/search?q=udacity"></iframe>
+  <iframe src="https://www.bing.com/search?q=edx"></iframe>
+  <iframe src="https://www.bing.com/search?q=khan+academy"></iframe>
+  <iframe src="https://www.bing.com/search?q=seesaw"></iframe>
+  <iframe src="https://www.bing.com/search?q=play+store"></iframe>
+  <iframe src="https://www.bing.com/search?q=phoronix"></iframe>
+  <script>
+    var searches = 0;
+    function updateCount() {
+        ++searches;
+        document.getElementById("searches").innerText = searches + " Searches";
+    }
+    Array.from(document.getElementsByTagName("iframe")).forEach(
+        e => e.onload = updateCount);
+  </script>
+</body>
+</html>
