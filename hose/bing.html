@@ -22,56 +22,15 @@
 <body>
   <h1 id="searches">0 Searches</h1>
   <script>
-    var queries = [
-        "air+quality+mountain+view",
-        "weather+mountain+view",
-        "bing+rewards",
-        "slickdeals",
-        "wikipedia",
-        "youtube",
-        "amazon",
-        "netflix",
-        "news",
-        "gmail",
-        "github",
-        "calfire",
-        "hacker+news",
-        "reddit",
-        "twitter+search",
-        "freegal",
-        "kanopy",
-        "hoopla",
-        "mountain+view+library",
-        "microsoft+rewards",
-        "google+translate",
-        "speed+test",
-        "what+is+my+ip",
-        "wayback+machine",
-        "lemire+blog",
-        "funcheapsf",
-        "java+annotated+monthly",
-        "ev+lease+deals",
-        "colab",
-        "oracle+cloud+login",
-        "slack",
-        "google+voice",
-        "google+calendar",
-        "coursera",
-        "udacity",
-        "edx",
-        "khan+academy",
-        "seesaw",
-        "play+store",
-        "phoronix",
-    ];
+    var maxSearches = window.location.hash.substr(1) || 40;
     var searches = -1;
     function loadNext() {
         ++searches;
         document.getElementById("searches").innerText = searches + " Searches";
 
-        if (searches < queries.length) {
+        if (searches < maxSearches) {
             var iframe = document.createElement("iframe");
-            iframe.src = "https://www.bing.com/search?q=" + queries[searches];
+            iframe.src = "https://www.bing.com/search?q=" + Date.now();
             iframe.onload = loadNext;
             document.body.appendChild(iframe);
         }
