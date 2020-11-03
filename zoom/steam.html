@@ -13,7 +13,7 @@
 <body>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-	if (window.matchMedia('(display-mode: standalone)').matches) {
+	if (window.matchMedia('(display-mode: minimal-ui)').matches) {
 	    let iframe = document.createElement('iframe');
 	    iframe.src = 'https://mvwsd.zoom.us/j/84484374113?pwd=OHBoMHNhQ2JQVncrRGtNc3lMNHZJdz09';
 	    iframe.onload = function() { window.close(); };
