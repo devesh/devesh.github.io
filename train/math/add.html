@@ -29,6 +29,7 @@
     var num2Div = document.getElementById("num2");
     var answerDiv = document.getElementById("answer");
     var correctAnswer = 0;
+    var number = 0;
 
     function random(numDigits) {
         let min = Math.pow(10, numDigits - 1);
@@ -44,7 +45,6 @@
         num2Div.innerHTML = '+&nbsp;&nbsp;' + num2;
         answerDiv.innerText = '';
     }
-    loadNext();
     document.body.onclick = loadNext;
 
     var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
@@ -56,21 +56,25 @@
         recognition.lang = 'en-US';
         recognition.interimResults = false;
         recognition.onresult = function(event) {
-            var number = event.results[0][0].transcript;
+            number = event.results[0][0].transcript;
             answerDiv.innerText = number;
             recognition.stop();
-            if (+number === correctAnswer) {
-                setTimeout(loadNext, .5);
-            }
         };
         recognition.onend = function(event) {
             recognition.start();
+        };
+        recognition.onstart = function(event) {
+            if (+number === correctAnswer) {
+                loadNext();
+            }
         };
         recognition.onerror = function(event) {
             console.log('Error');
             console.log(event);
         };
         recognition.start();
+    } else {
+        loadNext();
     }
   </script>
 </body>
