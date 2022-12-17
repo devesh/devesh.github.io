@@ -885,6 +885,7 @@
           const uncolored = updateUncolored();
           const price = updatePrice();
           if (conflicts == 0 && uncolored == 0 && price < bestPrice) {
+              bestPrice = price;
               localStorage.setItem("bestPrice", price.toString());
               localStorage.setItem("bestColoring", JSON.stringify(Object.fromEntries(regionColors)));
               document.getElementById("load_best").removeAttribute("hidden");
