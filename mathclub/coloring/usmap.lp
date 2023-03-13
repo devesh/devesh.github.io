@@ -1,28 +1,29 @@
-\ We formulate the problem as an Integer Linear Programming model with one binary variable per region_x_color and minimize the sum of the cost to color each region subject to exactly one color being used for each region and connected regions not sharing the same color.
-\ Generated with: console.log('Minimize\n\t' + regions.map(region => areas.get(region) + ' ' + region + '1 + ' + 2 * areas.get(region) + ' ' + region + '2 + ' + 3 * areas.get(region) + ' ' + region + '3 + ' + 4 * areas.get(region) + ' ' + region + '4').join(' + ') + '\nSubject To\n\t' + regions.map(region => region + '1 + ' + region + '2 + ' + region + '3 + ' + region + '4 = 1').join('\n\t') + '\n\t' + regions.flatMap(region => connectedRegions.get(region).filter(region2 => region2 > region).map(region2 => region + '1 + ' + region2 + '1 <= 1\n\t' + region + '2 + ' + region2 + '2 <= 1\n\t' + region + '3 + ' + region2 + '3 <= 1\n\t' + region + '4 + ' + region2 + '4 <= 1')).join('\n\t') + '\nBinary\n\t' + regions.map(region => region + '1 ' + region + '2 ' + region + '3 ' + region + '4').join(' ') + '\nEnd')
+\ We formulate the problem as an Integer Linear Programming model with one binary variable (must be either 0 or 1) per region_x_color and minimize the sum of the cost to color each region subject to exactly one color being used for each region and connected regions not sharing the same color.
+\ Generated with: regionVars = new Map(regions.map(region => [region, [...Array(Math.min(connectedRegions.get(region).length + 1, 4)).keys()].map(i => region + (i + 1))])); console.log('Minimize\n\t' + regions.map(region => {area = areas.get(region); return regionVars.get(region).map((rvar, index) => (index + 1)*area + " " + rvar).join(' + ')}).join(' + ') + '\nSubject To\n\t' + regions.map(region => regionVars.get(region).join(' + ') + ' = 1').join('\n\t') + '\n\t' + regions.flatMap(region => connectedRegions.get(region).filter(region2 => region2 > region).map(region2 => {region1Vars = regionVars.get(region); region2Vars = regionVars.get(region2); return region1Vars.slice(0, region2Vars.length).map((r1var, i) => r1var + ' + ' + region2Vars[i] + ' <= 1').join('\n\t');})).join('\n\t') + '\nBinary\n\t' + [...regionVars.values()].flatMap(r => r).join(' ') + '\nEnd')
+\ Single run solve time for different solvers:
 \ Gurobi 10.0.0_rc2 (0.04 seconds): gurobi_cl ResultFile=usmap.sol usmap.lp
-\ SCIP 8.0.2 (0.21 seconds): scip -c "read usmap.lp opt write solution usmap.sol quit"
-\ Mosek 10.0 (0.25 seconds): mosek -into usmap.sol usmap.lp
-\ HiGHS 1.4.1 (0.93 seconds): highs usmap.lp --solution_file usmap.sol
-\ Cbc 2.10.8 (1.79 seconds): cbc usmap.lp solve solu usmap.sol
-\ GLPK 5.0 (11.7 seconds): glpsol --lp usmap.lp -o usmap.sol
-\ lp_solve 5.5.2.11 (21.5 seconds): sed -ne 's/^       \(.*\)$/\1;/p;' usmap.lp | sed -e '1 s/^/min: /;$ s/ /, /g;$ s/^/bin /'|lp_solve -time > usmap.sol
+\ SCIP 8.0.2 (0.26 seconds): scip -c "read usmap.lp opt write solution usmap.sol quit"
+\ Mosek 10.0 (0.26 seconds): mosek -into usmap.sol usmap.lp
+\ HiGHS 1.4.2 (0.29 seconds): highs usmap.lp --solution_file usmap.sol
+\ Cbc 2.10.8 (0.31 seconds): cbc usmap.lp solve solu usmap.sol
+\ GLPK 5.0 (7.1 seconds): glpsol --lp usmap.lp -o usmap.sol
+\ lp_solve 5.5.2.11 (63.7 seconds): sed -ne 's/^       \(.*\)$/\1;/p;' usmap.lp | sed -e '1 s/^/min: /;$ s/ /, /g;$ s/^/bin /'|lp_solve -time > usmap.sol
 
 Minimize
-	1477953 AK1 + 2955906 AK2 + 4433859 AK3 + 5911812 AK4 + 131171 AL1 + 262342 AL2 + 393513 AL3 + 524684 AL4 + 134771 AR1 + 269542 AR2 + 404313 AR3 + 539084 AR4 + 294207 AZ1 + 588414 AZ2 + 882621 AZ3 + 1176828 AZ4 + 403466 CA1 + 806932 CA2 + 1210398 CA3 + 1613864 CA4 + 268431 CO1 + 536862 CO2 + 805293 CO3 + 1073724 CO4 + 12542 CT1 + 25084 CT2 + 37626 CT3 + 50168 CT4 + 158 DC1 + 316 DC2 + 474 DC3 + 632 DC4 + 5047 DE1 + 10094 DE2 + 15141 DE3 + 20188 DE4 + 138887 FL1 + 277774 FL2 + 416661 FL3 + 555548 FL4 + 148959 GA1 + 297918 GA2 + 446877 GA3 + 595836 GA4 + 16635 HI1 + 33270 HI2 + 49905 HI3 + 66540 HI4 + 144669 IA1 + 289338 IA2 + 434007 IA3 + 578676 IA4 + 214045 ID1 + 428090 ID2 + 642135 ID3 + 856180 ID4 + 143793 IL1 + 287586 IL2 + 431379 IL3 + 575172 IL4 + 92789 IN1 + 185578 IN2 + 278367 IN3 + 371156 IN4 + 211754 KS1 + 423508 KS2 + 635262 KS3 + 847016 KS4 + 102269 KY1 + 204538 KY2 + 306807 KY3 + 409076 KY4 + 111898 LA1 + 223796 LA2 + 335694 LA3 + 447592 LA4 + 20202 MA1 + 40404 MA2 + 60606 MA3 + 80808 MA4 + 25142 MD1 + 50284 MD2 + 75426 MD3 + 100568 MD4 + 79883 ME1 + 159766 ME2 + 239649 ME3 + 319532 ME4 + 146435 MI1 + 292870 MI2 + 439305 MI3 + 585740 MI4 + 206232 MN1 + 412464 MN2 + 618696 MN3 + 824928 MN4 + 178040 MO1 + 356080 MO2 + 534120 MO3 + 712160 MO4 + 121531 MS1 + 243062 MS2 + 364593 MS3 + 486124 MS4 + 376962 MT1 + 753924 MT2 + 1130886 MT3 + 1507848 MT4 + 125920 NC1 + 251840 NC2 + 377760 NC3 + 503680 NC4 + 178711 ND1 + 357422 ND2 + 536133 ND3 + 714844 ND4 + 198974 NE1 + 397948 NE2 + 596922 NE3 + 795896 NE4 + 23187 NH1 + 46374 NH2 + 69561 NH3 + 92748 NH4 + 19047 NJ1 + 38094 NJ2 + 57141 NJ3 + 76188 NJ4 + 314161 NM1 + 628322 NM2 + 942483 NM3 + 1256644 NM4 + 284332 NV1 + 568664 NV2 + 852996 NV3 + 1137328 NV4 + 122057 NY1 + 244114 NY2 + 366171 NY3 + 488228 NY4 + 105829 OH1 + 211658 OH2 + 317487 OH3 + 423316 OH4 + 177660 OK1 + 355320 OK2 + 532980 OK3 + 710640 OK4 + 248608 OR1 + 497216 OR2 + 745824 OR3 + 994432 OR4 + 115883 PA1 + 231766 PA2 + 347649 PA3 + 463532 PA4 + 2678 RI1 + 5356 RI2 + 8034 RI3 + 10712 RI4 + 77857 SC1 + 155714 SC2 + 233571 SC3 + 311428 SC4 + 196350 SD1 + 392700 SD2 + 589050 SD3 + 785400 SD4 + 106798 TN1 + 213596 TN2 + 320394 TN3 + 427192 TN4 + 676587 TX1 + 1353174 TX2 + 2029761 TX3 + 2706348 TX4 + 212818 UT1 + 425636 UT2 + 638454 UT3 + 851272 UT4 + 102279 VA1 + 204558 VA2 + 306837 VA3 + 409116 VA4 + 23871 VT1 + 47742 VT2 + 71613 VT3 + 95484 VT4 + 72119 WA1 + 144238 WA2 + 216357 WA3 + 288476 WA4 + 140268 WI1 + 280536 WI2 + 420804 WI3 + 561072 WI4 + 62259 WV1 + 124518 WV2 + 186777 WV3 + 249036 WV4 + 251470 WY1 + 502940 WY2 + 754410 WY3 + 1005880 WY4
+	1477953 AK1 + 131171 AL1 + 262342 AL2 + 393513 AL3 + 524684 AL4 + 134771 AR1 + 269542 AR2 + 404313 AR3 + 539084 AR4 + 294207 AZ1 + 588414 AZ2 + 882621 AZ3 + 1176828 AZ4 + 403466 CA1 + 806932 CA2 + 1210398 CA3 + 1613864 CA4 + 268431 CO1 + 536862 CO2 + 805293 CO3 + 1073724 CO4 + 12542 CT1 + 25084 CT2 + 37626 CT3 + 50168 CT4 + 158 DC1 + 316 DC2 + 474 DC3 + 5047 DE1 + 10094 DE2 + 15141 DE3 + 20188 DE4 + 138887 FL1 + 277774 FL2 + 416661 FL3 + 148959 GA1 + 297918 GA2 + 446877 GA3 + 595836 GA4 + 16635 HI1 + 144669 IA1 + 289338 IA2 + 434007 IA3 + 578676 IA4 + 214045 ID1 + 428090 ID2 + 642135 ID3 + 856180 ID4 + 143793 IL1 + 287586 IL2 + 431379 IL3 + 575172 IL4 + 92789 IN1 + 185578 IN2 + 278367 IN3 + 371156 IN4 + 211754 KS1 + 423508 KS2 + 635262 KS3 + 847016 KS4 + 102269 KY1 + 204538 KY2 + 306807 KY3 + 409076 KY4 + 111898 LA1 + 223796 LA2 + 335694 LA3 + 447592 LA4 + 20202 MA1 + 40404 MA2 + 60606 MA3 + 80808 MA4 + 25142 MD1 + 50284 MD2 + 75426 MD3 + 100568 MD4 + 79883 ME1 + 159766 ME2 + 146435 MI1 + 292870 MI2 + 439305 MI3 + 585740 MI4 + 206232 MN1 + 412464 MN2 + 618696 MN3 + 824928 MN4 + 178040 MO1 + 356080 MO2 + 534120 MO3 + 712160 MO4 + 121531 MS1 + 243062 MS2 + 364593 MS3 + 486124 MS4 + 376962 MT1 + 753924 MT2 + 1130886 MT3 + 1507848 MT4 + 125920 NC1 + 251840 NC2 + 377760 NC3 + 503680 NC4 + 178711 ND1 + 357422 ND2 + 536133 ND3 + 714844 ND4 + 198974 NE1 + 397948 NE2 + 596922 NE3 + 795896 NE4 + 23187 NH1 + 46374 NH2 + 69561 NH3 + 92748 NH4 + 19047 NJ1 + 38094 NJ2 + 57141 NJ3 + 76188 NJ4 + 314161 NM1 + 628322 NM2 + 942483 NM3 + 1256644 NM4 + 284332 NV1 + 568664 NV2 + 852996 NV3 + 1137328 NV4 + 122057 NY1 + 244114 NY2 + 366171 NY3 + 488228 NY4 + 105829 OH1 + 211658 OH2 + 317487 OH3 + 423316 OH4 + 177660 OK1 + 355320 OK2 + 532980 OK3 + 710640 OK4 + 248608 OR1 + 497216 OR2 + 745824 OR3 + 994432 OR4 + 115883 PA1 + 231766 PA2 + 347649 PA3 + 463532 PA4 + 2678 RI1 + 5356 RI2 + 8034 RI3 + 77857 SC1 + 155714 SC2 + 233571 SC3 + 196350 SD1 + 392700 SD2 + 589050 SD3 + 785400 SD4 + 106798 TN1 + 213596 TN2 + 320394 TN3 + 427192 TN4 + 676587 TX1 + 1353174 TX2 + 2029761 TX3 + 2706348 TX4 + 212818 UT1 + 425636 UT2 + 638454 UT3 + 851272 UT4 + 102279 VA1 + 204558 VA2 + 306837 VA3 + 409116 VA4 + 23871 VT1 + 47742 VT2 + 71613 VT3 + 95484 VT4 + 72119 WA1 + 144238 WA2 + 216357 WA3 + 140268 WI1 + 280536 WI2 + 420804 WI3 + 561072 WI4 + 62259 WV1 + 124518 WV2 + 186777 WV3 + 249036 WV4 + 251470 WY1 + 502940 WY2 + 754410 WY3 + 1005880 WY4
 Subject To
-	AK1 + AK2 + AK3 + AK4 = 1
+	AK1 = 1
 	AL1 + AL2 + AL3 + AL4 = 1
 	AR1 + AR2 + AR3 + AR4 = 1
 	AZ1 + AZ2 + AZ3 + AZ4 = 1
 	CA1 + CA2 + CA3 + CA4 = 1
 	CO1 + CO2 + CO3 + CO4 = 1
 	CT1 + CT2 + CT3 + CT4 = 1
-	DC1 + DC2 + DC3 + DC4 = 1
+	DC1 + DC2 + DC3 = 1
 	DE1 + DE2 + DE3 + DE4 = 1
-	FL1 + FL2 + FL3 + FL4 = 1
+	FL1 + FL2 + FL3 = 1
 	GA1 + GA2 + GA3 + GA4 = 1
-	HI1 + HI2 + HI3 + HI4 = 1
+	HI1 = 1
 	IA1 + IA2 + IA3 + IA4 = 1
 	ID1 + ID2 + ID3 + ID4 = 1
 	IL1 + IL2 + IL3 + IL4 = 1
@@ -32,7 +33,7 @@ Subject To
 	LA1 + LA2 + LA3 + LA4 = 1
 	MA1 + MA2 + MA3 + MA4 = 1
 	MD1 + MD2 + MD3 + MD4 = 1
-	ME1 + ME2 + ME3 + ME4 = 1
+	ME1 + ME2 = 1
 	MI1 + MI2 + MI3 + MI4 = 1
 	MN1 + MN2 + MN3 + MN4 = 1
 	MO1 + MO2 + MO3 + MO4 = 1
@@ -50,15 +51,15 @@ Subject To
 	OK1 + OK2 + OK3 + OK4 = 1
 	OR1 + OR2 + OR3 + OR4 = 1
 	PA1 + PA2 + PA3 + PA4 = 1
-	RI1 + RI2 + RI3 + RI4 = 1
-	SC1 + SC2 + SC3 + SC4 = 1
+	RI1 + RI2 + RI3 = 1
+	SC1 + SC2 + SC3 = 1
 	SD1 + SD2 + SD3 + SD4 = 1
 	TN1 + TN2 + TN3 + TN4 = 1
 	TX1 + TX2 + TX3 + TX4 = 1
 	UT1 + UT2 + UT3 + UT4 = 1
 	VA1 + VA2 + VA3 + VA4 = 1
 	VT1 + VT2 + VT3 + VT4 = 1
-	WA1 + WA2 + WA3 + WA4 = 1
+	WA1 + WA2 + WA3 = 1
 	WI1 + WI2 + WI3 + WI4 = 1
 	WV1 + WV2 + WV3 + WV4 = 1
 	WY1 + WY2 + WY3 + WY4 = 1
@@ -77,7 +78,6 @@ Subject To
 	AL1 + FL1 <= 1
 	AL2 + FL2 <= 1
 	AL3 + FL3 <= 1
-	AL4 + FL4 <= 1
 	AR1 + MO1 <= 1
 	AR2 + MO2 <= 1
 	AR3 + MO3 <= 1
@@ -161,15 +161,12 @@ Subject To
 	CT1 + RI1 <= 1
 	CT2 + RI2 <= 1
 	CT3 + RI3 <= 1
-	CT4 + RI4 <= 1
 	DC1 + MD1 <= 1
 	DC2 + MD2 <= 1
 	DC3 + MD3 <= 1
-	DC4 + MD4 <= 1
 	DC1 + VA1 <= 1
 	DC2 + VA2 <= 1
 	DC3 + VA3 <= 1
-	DC4 + VA4 <= 1
 	DE1 + MD1 <= 1
 	DE2 + MD2 <= 1
 	DE3 + MD3 <= 1
@@ -185,7 +182,6 @@ Subject To
 	FL1 + GA1 <= 1
 	FL2 + GA2 <= 1
 	FL3 + GA3 <= 1
-	FL4 + GA4 <= 1
 	GA1 + TN1 <= 1
 	GA2 + TN2 <= 1
 	GA3 + TN3 <= 1
@@ -197,7 +193,6 @@ Subject To
 	GA1 + SC1 <= 1
 	GA2 + SC2 <= 1
 	GA3 + SC3 <= 1
-	GA4 + SC4 <= 1
 	IA1 + MN1 <= 1
 	IA2 + MN2 <= 1
 	IA3 + MN3 <= 1
@@ -245,7 +240,6 @@ Subject To
 	ID1 + WA1 <= 1
 	ID2 + WA2 <= 1
 	ID3 + WA3 <= 1
-	ID4 + WA4 <= 1
 	IL1 + IN1 <= 1
 	IL2 + IN2 <= 1
 	IL3 + IN3 <= 1
@@ -317,7 +311,6 @@ Subject To
 	MA1 + RI1 <= 1
 	MA2 + RI2 <= 1
 	MA3 + RI3 <= 1
-	MA4 + RI4 <= 1
 	MA1 + NY1 <= 1
 	MA2 + NY2 <= 1
 	MA3 + NY3 <= 1
@@ -344,8 +337,6 @@ Subject To
 	MD4 + PA4 <= 1
 	ME1 + NH1 <= 1
 	ME2 + NH2 <= 1
-	ME3 + NH3 <= 1
-	ME4 + NH4 <= 1
 	MI1 + WI1 <= 1
 	MI2 + WI2 <= 1
 	MI3 + WI3 <= 1
@@ -405,7 +396,6 @@ Subject To
 	NC1 + SC1 <= 1
 	NC2 + SC2 <= 1
 	NC3 + SC3 <= 1
-	NC4 + SC4 <= 1
 	ND1 + SD1 <= 1
 	ND2 + SD2 <= 1
 	ND3 + SD3 <= 1
@@ -469,7 +459,6 @@ Subject To
 	OR1 + WA1 <= 1
 	OR2 + WA2 <= 1
 	OR3 + WA3 <= 1
-	OR4 + WA4 <= 1
 	PA1 + WV1 <= 1
 	PA2 + WV2 <= 1
 	PA3 + WV3 <= 1
@@ -491,5 +480,5 @@ Subject To
 	VA3 + WV3 <= 1
 	VA4 + WV4 <= 1
 Binary
-	AK1 AK2 AK3 AK4 AL1 AL2 AL3 AL4 AR1 AR2 AR3 AR4 AZ1 AZ2 AZ3 AZ4 CA1 CA2 CA3 CA4 CO1 CO2 CO3 CO4 CT1 CT2 CT3 CT4 DC1 DC2 DC3 DC4 DE1 DE2 DE3 DE4 FL1 FL2 FL3 FL4 GA1 GA2 GA3 GA4 HI1 HI2 HI3 HI4 IA1 IA2 IA3 IA4 ID1 ID2 ID3 ID4 IL1 IL2 IL3 IL4 IN1 IN2 IN3 IN4 KS1 KS2 KS3 KS4 KY1 KY2 KY3 KY4 LA1 LA2 LA3 LA4 MA1 MA2 MA3 MA4 MD1 MD2 MD3 MD4 ME1 ME2 ME3 ME4 MI1 MI2 MI3 MI4 MN1 MN2 MN3 MN4 MO1 MO2 MO3 MO4 MS1 MS2 MS3 MS4 MT1 MT2 MT3 MT4 NC1 NC2 NC3 NC4 ND1 ND2 ND3 ND4 NE1 NE2 NE3 NE4 NH1 NH2 NH3 NH4 NJ1 NJ2 NJ3 NJ4 NM1 NM2 NM3 NM4 NV1 NV2 NV3 NV4 NY1 NY2 NY3 NY4 OH1 OH2 OH3 OH4 OK1 OK2 OK3 OK4 OR1 OR2 OR3 OR4 PA1 PA2 PA3 PA4 RI1 RI2 RI3 RI4 SC1 SC2 SC3 SC4 SD1 SD2 SD3 SD4 TN1 TN2 TN3 TN4 TX1 TX2 TX3 TX4 UT1 UT2 UT3 UT4 VA1 VA2 VA3 VA4 VT1 VT2 VT3 VT4 WA1 WA2 WA3 WA4 WI1 WI2 WI3 WI4 WV1 WV2 WV3 WV4 WY1 WY2 WY3 WY4
+	AK1 AL1 AL2 AL3 AL4 AR1 AR2 AR3 AR4 AZ1 AZ2 AZ3 AZ4 CA1 CA2 CA3 CA4 CO1 CO2 CO3 CO4 CT1 CT2 CT3 CT4 DC1 DC2 DC3 DE1 DE2 DE3 DE4 FL1 FL2 FL3 GA1 GA2 GA3 GA4 HI1 IA1 IA2 IA3 IA4 ID1 ID2 ID3 ID4 IL1 IL2 IL3 IL4 IN1 IN2 IN3 IN4 KS1 KS2 KS3 KS4 KY1 KY2 KY3 KY4 LA1 LA2 LA3 LA4 MA1 MA2 MA3 MA4 MD1 MD2 MD3 MD4 ME1 ME2 MI1 MI2 MI3 MI4 MN1 MN2 MN3 MN4 MO1 MO2 MO3 MO4 MS1 MS2 MS3 MS4 MT1 MT2 MT3 MT4 NC1 NC2 NC3 NC4 ND1 ND2 ND3 ND4 NE1 NE2 NE3 NE4 NH1 NH2 NH3 NH4 NJ1 NJ2 NJ3 NJ4 NM1 NM2 NM3 NM4 NV1 NV2 NV3 NV4 NY1 NY2 NY3 NY4 OH1 OH2 OH3 OH4 OK1 OK2 OK3 OK4 OR1 OR2 OR3 OR4 PA1 PA2 PA3 PA4 RI1 RI2 RI3 SC1 SC2 SC3 SD1 SD2 SD3 SD4 TN1 TN2 TN3 TN4 TX1 TX2 TX3 TX4 UT1 UT2 UT3 UT4 VA1 VA2 VA3 VA4 VT1 VT2 VT3 VT4 WA1 WA2 WA3 WI1 WI2 WI3 WI4 WV1 WV2 WV3 WV4 WY1 WY2 WY3 WY4
 End
