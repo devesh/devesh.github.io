@@ -1,0 +1,1 @@
+This is an experiment in arithmetic fluency training for kids who are too young to have the dexterity to operate a pencil or a keyboard. It uses the browser's [SpeechRecognition](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition) API for answer input. At the time of writing, the implementations of this API are not reliable enough to make this viable.

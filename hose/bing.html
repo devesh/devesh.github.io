@@ -1,0 +1,41 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Bing Searches</title>
+  <meta name="description" content="Search Bing">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark light">
+  <style>
+    iframe {
+        height: 1px;
+        width: 1px;
+        border: 1px;
+        margin: 1px;
+        padding: 1px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 id="searches">0 Searches</h1>
+  <script>
+    var maxSearches = window.location.hash.substr(1) || 40;
+    var searches = -1;
+    function loadNext() {
+        ++searches;
+        document.getElementById("searches").innerText = searches + " Searches";
+
+        if (searches < maxSearches) {
+            var iframe = document.createElement("iframe");
+            iframe.src = "https://www.bing.com/search?q=" + Date.now();
+            iframe.onload = loadNext;
+            document.body.appendChild(iframe);
+        }
+    }
+    loadNext();
+  </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Addition Training</title>
+  <meta name="description" content="Addition Training">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark light">
+  <style>
+    .num {
+        font-size: 25vh;
+        text-align: right;
+        width: 80%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="num1" class="num"></div>
+  <div id="num2" class="num"></div>
+  <hr>
+  <div id="answer" class="num"></div>
+  <script>
+    var numDigits1 = window.location.hash.substr(1,1);
+    var numDigits2 = window.location.hash.substr(2,1);
+    var num1Div = document.getElementById("num1");
+    var num2Div = document.getElementById("num2");
+    var answerDiv = document.getElementById("answer");
+    var correctAnswer = 0;
+    var number = 0;
+
+    function random(numDigits) {
+        let min = Math.pow(10, numDigits - 1);
+        let maxPlus1 = min * 10;
+        return Math.floor(Math.random() * (maxPlus1 - min)) + min;
+    }
+
+    function loadNext() {
+        let num1 = random(numDigits1);
+        let num2 = random(numDigits2);
+        correctAnswer = num1 + num2;
+        num1Div.innerText = num1;
+        num2Div.innerHTML = '+&nbsp;&nbsp;' + num2;
+        answerDiv.innerText = '';
+    }
+    document.body.onclick = loadNext;
+
+    var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+    if (SpeechRecognition) {
+        var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
+        var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
+        var recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.onresult = function(event) {
+            number = event.results[0][0].transcript;
+            answerDiv.innerText = number;
+            recognition.stop();
+        };
+        recognition.onend = function(event) {
+            recognition.start();
+        };
+        recognition.onstart = function(event) {
+            if (+number === correctAnswer) {
+                loadNext();
+            }
+        };
+        recognition.onerror = function(event) {
+            console.log('Error');
+            console.log(event);
+        };
+        recognition.start();
+    } else {
+        loadNext();
+    }
+  </script>
+</body>
+</html>
