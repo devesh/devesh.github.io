@@ -1842,6 +1842,7 @@
   function setPath(path) {
       if (possibleVisitLine) {
 	  possibleVisitLine.remove();
+	  possibleVisitLine = null;
       }
       [...document.querySelectorAll("text[id^='CAP-']")].forEach(cap => cap.removeAttribute("class"));
       [...document.querySelectorAll("line.path")].forEach(line => line.remove());
