@@ -10,13 +10,13 @@
     <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/1/18/Red_Silhouette_-_Salesman.svg">
     <style type="text/css">
       svg text {
-	  pointer-events: none;
+	        pointer-events: none;
       }
       svg line {
-	  pointer-events: none;
+	        pointer-events: none;
       }
       svg text.visited {
-	  stroke: red;
+	        stroke: red;
       }
       </style>
   </head>
@@ -1776,11 +1776,11 @@
   function canClick(state) {
       // Done
       if (visited.length >= 51) {
-	  return false;
+	        return false;
       }
       // Last leg must return to CA.
       if (visited.length == 50) {
-	  return state == "CA";
+	        return state == "CA";
       }
       // Only visit new states.
       return !visited.includes(state);
@@ -1788,15 +1788,15 @@
   function possiblyVisit(event) {
       const state = event.target.id.substring(6);
       if (!canClick(state)) {
-	  return;
+	        return;
       }
       if (!possibleVisitLine) {
-	  const lastState = visited[visited.length - 1];
-	  possibleVisitLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-	  possibleVisitLine.setAttribute("stroke", "red");
-	  possibleVisitLine.setAttribute("x1", stateDetails.get(lastState).x);
-	  possibleVisitLine.setAttribute("y1", stateDetails.get(lastState).y);
-	  svg.append(possibleVisitLine);
+	        const lastState = visited[visited.length - 1];
+	        possibleVisitLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+	        possibleVisitLine.setAttribute("stroke", "red");
+	        possibleVisitLine.setAttribute("x1", stateDetails.get(lastState).x);
+	        possibleVisitLine.setAttribute("y1", stateDetails.get(lastState).y);
+	        svg.append(possibleVisitLine);
       }
       possibleVisitLine.setAttribute("x2", stateDetails.get(state).x);
       possibleVisitLine.setAttribute("y2", stateDetails.get(state).y);
@@ -1807,16 +1807,13 @@
   }
   addEventListener("mousedown", (event) => {
       if (event.button == 2 && visited.length > 1) {
-	  const unvisitedState = visited.pop();
-	  document.getElementById("CAP-" + unvisitedState).removeAttribute("class");
-	  if (possibleVisitLine) {
-	      possibleVisitLine.remove();
-	      possibleVisitLine = null;
-	  }
-	  svg.lastChild.remove();
-	  distance -= capitalDistance(stateDetails.get(visited[visited.length-1]), stateDetails.get(unvisitedState));
-	  localStorage.setItem("currentPath", JSON.stringify(visited));
-	  showMetrics();
+	        const unvisitedState = visited.pop();
+	        document.getElementById("CAP-" + unvisitedState).removeAttribute("class");
+          clearPossibleVisit();
+	        svg.lastChild.remove();
+	        distance -= capitalDistance(stateDetails.get(visited[visited.length-1]), stateDetails.get(unvisitedState));
+	        localStorage.setItem("currentPath", JSON.stringify(visited));
+	        showMetrics();
       }
   });
   function addToPath(state) {
@@ -1840,10 +1837,7 @@
       }
   }
   function setPath(path) {
-      if (possibleVisitLine) {
-	  possibleVisitLine.remove();
-	  possibleVisitLine = null;
-      }
+      clearPossibleVisit();
       [...document.querySelectorAll("text[id^='CAP-']")].forEach(cap => cap.removeAttribute("class"));
       [...document.querySelectorAll("line.path")].forEach(line => line.remove());
       distance = 0;
@@ -1860,21 +1854,27 @@
   }
   function visit(event) {
       if (event.button != 0) {
-	  return true;
+	        return true;
       }
       const state = event.target.id.substring(6);
       if (!canClick(state)) {
-	  return;
+	        return;
       }
       addToPath(state);
-      possibleVisitLine.remove();
-      possibleVisitLine = null;
+      clearPossibleVisit();
       localStorage.setItem("currentPath", JSON.stringify(visited));
       showMetrics();
   }
+  function clearPossibleVisit(event) {
+      if (possibleVisitLine) {
+          possibleVisitLine.remove();
+          possibleVisitLine = null;
+      }
+  }
   setPath(JSON.parse(localStorage.getItem("currentPath") || '["CA"]'));
   [...document.querySelectorAll("path[id^='STATE-']")].forEach(path => {
-      path.onmouseover = possiblyVisit;
+      path.onmouseenter = possiblyVisit;
+      path.onmouseleave = clearPossibleVisit;
       path.onmousedown = visit;
   });
 </script>
